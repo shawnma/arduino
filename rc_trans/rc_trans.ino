@@ -1,11 +1,10 @@
-// EnableInterrupt Simple example sketch. Demonstrates operation on a single pin of your choice.
-// See https://github.com/GreyGnome/EnableInterrupt and the README.md for more information.
+#define EI_ARDUINO_INTERRUPTED_PIN
 #include <EnableInterrupt.h>
 #include <Servo.h>
 
 class Transformer {
   public:
-    Transformer(uint8_t in, int out): _in(in), _refresh(false) {
+    Transformer(uint8_t in, int out): _in(in) {
       pinMode(in, INPUT_PULLUP);
       servo.attach(out);
       Serial.println(String("Attach ") + in + "/" + out);
@@ -14,7 +13,7 @@ class Transformer {
     volatile uint16_t start;
     uint8_t _in;
     volatile uint16_t current;
-    volatile bool _refresh;
+    //volatile bool _refresh;
     Servo servo;
   public:
     inline int getIn() {
@@ -26,24 +25,12 @@ class Transformer {
         //Serial.println("interrupt");
       } else {
         uint16_t length = (uint16_t)(micros() - start);
-        //Serial.println(length);
-        setCurrent(length);
+        if (abs(length - current) > 20) {
+          current = length;
+          int ms = map_input(current);
+          servo.writeMicroseconds(ms);
+        }
       }
-    }
-
-    inline void setCurrent(uint16_t length) {
-      if (abs(length - current) > 20) {
-        current = length;
-        _refresh = true;
-      }
-    }
-
-    void refresh() {
-      if (!_refresh) return;
-      _refresh = false;
-      int ms = map_input(current);
-      servo.writeMicroseconds(ms);
-      Serial.println(String("->") + _in + " " + ms + "<-" + current);
     }
   protected:
     // map input from 1000 -> 2000, to it's expected value.
@@ -62,36 +49,41 @@ class EscTransformer: public Transformer {
 class RotationTransformer: public Transformer {
   public:
     RotationTransformer(): Transformer(9, 11) {}
+    RotationTransformer(uint8_t in, uint8_t out): Transformer(in, out) {}
   protected:
     virtual int map_input(int input) {
       return map(input, 1144, 1896, 500, 2500);
     }
 };
 
+#define COUNT  3
+Transformer* transformers[COUNT];
+
 EscTransformer *esc;
 RotationTransformer *rotation;
 
-void rot_int() {
-  rotation->interrupt();
-}
-
-void esc_int() {
-  esc->interrupt();
+void int_func() {
+  for (int i = 0; i < COUNT; i++) {
+    if (arduinoInterruptedPin == transformers[i]->getIn()) {
+      transformers[i]->interrupt();
+    }
+  }
 }
 
 void setup() {
-  Serial.begin(152000);
-  rotation = new RotationTransformer();
-  esc = new EscTransformer();
-  enableInterrupt(rotation->getIn(), rot_int, CHANGE);
-  enableInterrupt(esc->getIn(), esc_int, CHANGE);
-  //interrupts();
+  Serial.begin(115200);
+  transformers[0] = new RotationTransformer(2, 11);
+  transformers[1] = new EscTransformer();
+  transformers[2] = new RotationTransformer(3, 10);
+  for (int i = 0; i < COUNT; i++) {
+    enableInterrupt(transformers[i]->getIn(), int_func, CHANGE);
+  }
 }
 
 // In the loop we just display interruptCount. The value is updated by the interrupt routine.
 void loop() {
-  rotation->refresh();
-  esc->refresh();
+  //rotation->refresh();
+  //esc->refresh();
   delay(1);
 }
 
