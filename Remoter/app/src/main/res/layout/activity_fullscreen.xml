@@ -8,7 +8,7 @@
     tools:context=".FullscreenActivity">
 
 
-    <com.shawnma.remoter.Tracker
+    <SeekBar
         android:id="@+id/left"
         android:layout_margin="30dp"
         android:layout_width="fill_parent"
@@ -48,7 +48,7 @@
 
     </RelativeLayout>
 
-    <com.shawnma.remoter.Tracker
+    <SeekBar
         android:id="@+id/right"
         android:layout_margin="30dp"
         android:layout_width="fill_parent"

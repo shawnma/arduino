@@ -18,10 +18,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 public class FullscreenActivity extends AppCompatActivity {
 
     private View mContentView;
