@@ -29,6 +29,7 @@ class Transformer {
           current = length;
           int ms = map_input(current);
           servo.writeMicroseconds(ms);
+          Serial.println(String("->") + _in + " -->" + ms);
         }
       }
     }
@@ -39,10 +40,14 @@ class Transformer {
 
 class EscTransformer: public Transformer {
   public:
-    EscTransformer(): Transformer(8, 10) {}
+    EscTransformer(uint8_t in, uint8_t out): Transformer(in, out) {}
   protected:
     virtual int map_input(int input) {
-      return map(input, 1156, 1788, 2500, 1800);
+      int out = map(input, 1156, 1788, 2500, 1800);
+      if (out < 1300 || out > 3000) {
+        out = 2200;
+      }
+      return out;
     }
 };
 
@@ -72,9 +77,9 @@ void int_func() {
 
 void setup() {
   Serial.begin(115200);
-  transformers[0] = new RotationTransformer(2, 11);
-  transformers[1] = new EscTransformer();
-  transformers[2] = new RotationTransformer(3, 10);
+  transformers[0] = new RotationTransformer(2, 3);
+  transformers[1] = new EscTransformer(4, 5);
+  transformers[2] = new RotationTransformer(6, 7);
   for (int i = 0; i < COUNT; i++) {
     enableInterrupt(transformers[i]->getIn(), int_func, CHANGE);
   }
