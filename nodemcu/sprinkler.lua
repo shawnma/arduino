@@ -15,7 +15,9 @@ function do_server()
 		if cmd == 'low' then
 			gpio.write(pin, gpio.LOW)
 			tmr.stop(pin-1)
-			tmr.alarm(pin-1, data*1000, 0, function() gpio.write(pin, gpio.HIGH) end)
+			if data > 0 then
+				tmr.alarm(pin-1, data*1000, 0, function() gpio.write(pin, gpio.HIGH) end)
+			end
 		elseif cmd == 'high' then
 			gpio.write(pin, gpio.HIGH)
 		end

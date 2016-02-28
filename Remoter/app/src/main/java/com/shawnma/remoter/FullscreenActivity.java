@@ -104,7 +104,7 @@ public class FullscreenActivity extends AppCompatActivity {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             int val = channel | progress;
-            if (channel == 1) {
+            if (channel == 0) {
                 val = channel | (127 - progress); // let it reverse.
             }
             sender.send(val);
@@ -158,8 +158,6 @@ public class FullscreenActivity extends AppCompatActivity {
     }
 
     private void setup(SeekBar bar, int channel, Sender sender) {
-        bar.setMax(127);
-        bar.setProgress(64);
         bar.setOnSeekBarChangeListener(new Listener(channel, sender));
     }
 
