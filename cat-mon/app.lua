@@ -14,13 +14,37 @@ my.create_server(4000, function(request)
     end
 end)
 
-my.set_speed(30)
+my.init()
+my.set_speed(90)
+
+function delayed_execution(sequence_table, delay_ms)
+    local index = 1
+    local t = tmr.create()
+    local function execute_next()
+      if index <= #sequence_table then
+        print("running index ", index)
+        local function_to_call = sequence_table[index]
+        index = index + 1
+        function_to_call()
+      else
+        t:stop()
+        print("finished")
+      end
+    end
+    t:alarm(delay_ms, tmr.ALARM_AUTO, execute_next)
+end
+
 my.forward()
-tmr.delay(2000)
-my.left_turn()
-tmr.delay(2000)
-my.right_turn()
-tmr.delay(2000)
-my.back()
-tmr.delay(2000)
-my.set_speed(0)
+
+local d=tmr.create()
+
+local table = {
+    my.left_turn,
+    my.right_turn,
+    my.back,
+    function ()
+        my.set_speed(0)
+    end
+}
+
+delayed_execution(table, 4000)

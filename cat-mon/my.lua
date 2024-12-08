@@ -19,11 +19,10 @@ local function servo(pin, duty) -- 0 - 127
     pwm.start(pin)
 end
 
-local speed = 0
+-- local speed = 0
 local pins = {
-    speed = 1,
-    left = {forward=2, backward=3},
-    right = {forward=4, backward=5},
+    left = {forward=2, backward=3, speed=1},
+    right = {forward=5, backward=6, speed=4},
 }
 
 local function init()
@@ -31,42 +30,54 @@ local function init()
     gpio.mode(pins.right.forward, gpio.OUTPUT)
     gpio.mode(pins.left.backward, gpio.OUTPUT)
     gpio.mode(pins.right.backward, gpio.OUTPUT)
-    pwm.setup(pins.speed, 500)
+    pwm.setup(pins.left.speed, 500, 0)
+    pwm.setup(pins.right.speed, 500, 0)
+    pwm.start(pins.left.speed)
+    pwm.start(pins.right.speed)
 end
 
 -- speed 0 to 100; 0 to stop
 local function set_speed(s)
-    speed = s
+    print("setting speed ", s)
+    -- speed = s
     local duty = map(s, 0, 100, 0, 1023)
-    pwm.setduty(pins.speed, duty)
+    pwm.setduty(pins.left.speed, duty)
+    pwm.setduty(pins.right.speed, duty)
 end
 
 local function set_dir(pin, forward)
+    print("set dir: ", pin.forward, forward and gpio.HIGH or gpio.LOW)
+    print("set dir: ", pin.backward, forward and gpio.LOW or gpio.HIGH)
     gpio.write(pin.forward, forward and gpio.HIGH or gpio.LOW)
     gpio.write(pin.backward, forward and gpio.LOW or gpio.HIGH)
 end
 
 local function forward()
+    print("foward...")
     set_dir(pins.left, true)
     set_dir(pins.right, true)
 end
 
 local function left_turn()
+    print("left turn")
     set_dir(pins.left, false)
     set_dir(pins.right, true)
 end
 
 local function right_turn()
+    print("right turn")
     set_dir(pins.left, true)
     set_dir(pins.right, false)
 end
 
 local function back()
+    print("back")
     set_dir(pins.left, false)
     set_dir(pins.right, false)
 end
 
 my = {
+    init=init,
     create_server = create_server,
     map=map,
     servo=servo,
