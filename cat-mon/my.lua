@@ -1,5 +1,6 @@
 local function create_server(port, line_callback)
-    srv=net.createServer(net.TCP)
+    print("listening on port", port)
+    srv=net.createServer(net.TCP, 30)
     srv:listen(port, function(conn)
         conn:on("receive", function(client,request)
             line_callback(request)
@@ -21,20 +22,9 @@ end
 
 -- local speed = 0
 local pins = {
-    left = {forward=2, backward=3, speed=1},
-    right = {forward=5, backward=6, speed=4},
+    left = {forward=0, backward=1, speed=5},
+    right = {forward=2, backward=3, speed=6},
 }
-
-local function init()
-    gpio.mode(pins.left.forward, gpio.OUTPUT)
-    gpio.mode(pins.right.forward, gpio.OUTPUT)
-    gpio.mode(pins.left.backward, gpio.OUTPUT)
-    gpio.mode(pins.right.backward, gpio.OUTPUT)
-    pwm.setup(pins.left.speed, 500, 0)
-    pwm.setup(pins.right.speed, 500, 0)
-    pwm.start(pins.left.speed)
-    pwm.start(pins.right.speed)
-end
 
 -- speed 0 to 100; 0 to stop
 local function set_speed(s)
@@ -45,12 +35,34 @@ local function set_speed(s)
     pwm.setduty(pins.right.speed, duty)
 end
 
+local function stop()
+    gpio.write(pins.right.backward, gpio.LOW)
+    gpio.write(pins.left.backward, gpio.LOW)
+    gpio.write(pins.left.forward, gpio.LOW)
+    gpio.write(pins.right.forward, gpio.LOW)
+    set_speed(0)
+end
+
+local function init()
+    gpio.mode(pins.left.forward, gpio.OUTPUT)
+    gpio.mode(pins.right.forward, gpio.OUTPUT)
+    gpio.mode(pins.left.backward, gpio.OUTPUT)
+    gpio.mode(pins.right.backward, gpio.OUTPUT)
+    pwm.setup(pins.left.speed, 500, 0)
+    pwm.setup(pins.right.speed, 500, 0)
+    pwm.start(pins.left.speed)
+    pwm.start(pins.right.speed)
+    stop()
+end
+
+
 local function set_dir(pin, forward)
     print("set dir: ", pin.forward, forward and gpio.HIGH or gpio.LOW)
     print("set dir: ", pin.backward, forward and gpio.LOW or gpio.HIGH)
     gpio.write(pin.forward, forward and gpio.HIGH or gpio.LOW)
     gpio.write(pin.backward, forward and gpio.LOW or gpio.HIGH)
 end
+
 
 local function forward()
     print("foward...")
@@ -77,6 +89,7 @@ local function back()
 end
 
 my = {
+    stop=stop,
     init=init,
     create_server = create_server,
     map=map,
