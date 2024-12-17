@@ -5,7 +5,7 @@ function startup()
         print("Running")
         file.close("init.lua")
         -- the actual application is stored in 'application.lua'
-        dofile("app.lua")
+        dofile("disp.lua")
     end
 end
 
@@ -63,7 +63,8 @@ wifi.eventmon.register(wifi.eventmon.STA_CONNECTED, wifi_connect_event)
 wifi.eventmon.register(wifi.eventmon.STA_GOT_IP, wifi_got_ip_event)
 wifi.eventmon.register(wifi.eventmon.STA_DISCONNECTED, wifi_disconnect_event)
 
-print("Connecting to WiFi access point...")
-wifi.setmode(wifi.STATION)
-wifi.sta.config({ssid="madevices", pwd="iwantmilk"})
+-- print("Connecting to WiFi access point...")
+--wifi.setmode(wifi.STATION)
+--wifi.sta.config({ssid="madevices", pwd="iwantmilk"})
 -- wifi.sta.connect() not necessary because config() uses auto-connect=true by default
+tmr.create():alarm(3000, tmr.ALARM_SINGLE, startup)
