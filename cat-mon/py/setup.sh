@@ -1,0 +1,1 @@
+pip install -U micropython-esp32-stubs==1.23.0'.*' --target typings --no-user

@@ -2,18 +2,20 @@ import utime, socket
 
 def do_connect():
     import network
-    sta_if = network.WLAN(network.WLAN.IF_STA)
-    if not sta_if.isconnected():
+    nic = network.WLAN(network.WLAN.IF_STA)
+    if not nic.isconnected():
         print('connecting to network...')
-        sta_if.active(True)
+        nic.active(True)
         f = open('key.txt')
+        if f is None:
+            raise Exception("No wifi key.txt present.")
         key = f.readline().strip()
         f.close()
-        sta_if.connect('milkyway', key)
-        while not sta_if.isconnected():
+        nic.connect('milkyway', key)
+        while not nic.isconnected():
             utime.sleep_ms(50)
             print(".", end="")
-    print('connected:', sta_if.ipconfig('addr4'))
+    print('connected:', nic.ifconfig())
 
 def create_server(port, callback):
     s = socket.socket()

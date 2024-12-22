@@ -1,5 +1,5 @@
 from machine import Pin, I2C
-from lcd2 import I2cLcd
+from driver.lcd2 import I2cLcd
 #from lcd import LCD
 import time
 
