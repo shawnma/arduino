@@ -29,6 +29,8 @@ def create_server(port, callback):
             cl_file = cl.makefile('rwb', 0)
             while True:
                 line = cl_file.readline().strip()
+                if line == None or len(line) == 0:
+                    break
                 callback(line)
         except Exception as e:
             print(e)

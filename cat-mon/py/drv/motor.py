@@ -1,9 +1,10 @@
 from machine import Pin, PWM
 
+
 class Motor:
     # the min_duty and max_duty are defined for 15000Hz frequency
     # you can pass as arguments
-    def __init__(self, pin1, pin2, enable_pin, min_duty=750, max_duty=1023):
+    def __init__(self, pin1: int, pin2: int, enable_pin: int, min_duty=750, max_duty=1023):
         self.pin1 = Pin(pin1, Pin.OUT)
         self.pin2 = Pin(pin2, Pin.OUT)
         self.enable_pin = PWM(Pin(enable_pin))
@@ -12,22 +13,22 @@ class Motor:
         self.max_duty = max_duty
 
     # speed value can be between 0 and 100
-    def forward(self, speed):
-        print("forward...")
+    def forward(self, speed: int):
+        #print("forward...")
         self.speed = speed
         self.enable_pin.duty(self.duty_cycle())
         self.pin1.value(1)
         self.pin2.value(0)
 
-    def backward(self, speed):
-        print("back...")
+    def backward(self, speed: int):
+        #print("back...")
         self.speed = speed
         self.enable_pin.duty(self.duty_cycle())
         self.pin1.value(0)
         self.pin2.value(1)
 
     def stop(self):
-        print("stop")
+        #print("stop")
         self.enable_pin.duty(0)
         self.pin1.value(0)
         self.pin2.value(0)
