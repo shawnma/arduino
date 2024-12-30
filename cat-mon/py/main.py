@@ -10,7 +10,7 @@ up = Servo(22)
 
 def handle_network(line):
     line = line.decode()
-    print("network line", line)
+    display.print_text("network line", line)
     if line == 'f':
         car.forward()
     elif line == 'b':

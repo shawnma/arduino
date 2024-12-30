@@ -15,7 +15,7 @@ def do_connect():
         nic.connect('milkyway', key)
         while not nic.isconnected():
             utime.sleep_ms(50)
-            print_text(".", end="")
+            print_text(".", same_line=True)
     print_text('connected:', nic.ifconfig())
 
 def create_server(port, callback):
@@ -34,6 +34,10 @@ def create_server(port, callback):
                     break
                 callback(line)
         except Exception as e:
-            sys.print_exception(e)
+            import io, sys
+            out = io.StringIO()
+            sys.print_exception(e, out)
+            print_text(out.getvalue())
+            cl.write(out.getvalue())
             cl.close()
     
