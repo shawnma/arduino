@@ -89,6 +89,9 @@ class SSD1306(framebuf.FrameBuffer):
         self.write_cmd(SET_COM_OUT_DIR | ((rotate & 1) << 3))
         self.write_cmd(SET_SEG_REMAP | (rotate & 1))
 
+    def write_cmd(self, cmd):
+        pass
+
     def show(self):
         x0 = 0
         x1 = self.width - 1

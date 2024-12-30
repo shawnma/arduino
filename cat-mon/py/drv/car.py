@@ -36,15 +36,23 @@ class FullSpeedCar:
         self.left.backward(100)
         self.left.backward(100)
 
-    def leftTurn(self):
+    def leftTurn(self, degree=6):
         self.update()
         self.left.stop()
         self.right.forward(100)
+        if degree > 90:
+            degree = 90
+        utime.sleep_ms(100*degree/6) # 100 ms is 90/15 = 6 degree
+        self.stop()
 
-    def rightTurn(self):
+    def rightTurn(self, degree=6):
         self.update()
         self.left.forward(100)
         self.right.stop()
+        if degree > 90:
+            degree = 90
+        utime.sleep_ms(100*degree/6) # 100 ms is 90/15 = 6 degree
+        self.stop()
 
     def stop(self):
         self.left.stop()

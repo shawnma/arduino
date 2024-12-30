@@ -9,6 +9,7 @@ class Motor:
         self.pin2 = Pin(pin2, Pin.OUT)
         self.enable_pin = PWM(Pin(enable_pin))
         self.enable_pin.freq(500)
+        self.stop()
         self.min_duty = min_duty
         self.max_duty = max_duty
 
