@@ -4,7 +4,7 @@ from servo.servo import Servo
 import disp.disp as display
 
 display.print_text("Starting...")
-car = FullSpeedCar(9,18,19,10)
+car = FullSpeedCar(9,18,19,20)
 base = Servo(21)
 up = Servo(22)
 

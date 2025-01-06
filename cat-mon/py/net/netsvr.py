@@ -18,6 +18,10 @@ def do_connect():
             print_text(".", same_line=True)
     print_text('connected:', nic.ifconfig())
 
+def threaded_server(port, callback):
+    import _thread
+    _thread.start_new_thread(create_server, (port, callback))
+
 def create_server(port, callback):
     s = socket.socket()
     s.bind(('0.0.0.0', port))
