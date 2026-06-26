@@ -22,6 +22,15 @@ def threaded_server(port, callback):
     import _thread
     _thread.start_new_thread(create_server, (port, callback))
 
+def line_handler(client, callback):
+    while True:
+        client.setblocking(False)
+        line = client.readline().strip()
+        if line == None or len(line) == 0:
+            break
+        print_text("NET", line)
+        callback(line)
+
 def create_server(port, callback):
     s = socket.socket()
     s.bind(('0.0.0.0', port))
@@ -30,7 +39,7 @@ def create_server(port, callback):
     while True:
         cl, addr = s.accept()
         try:
-            print_text('client connected from', addr)
+            print_text('client from:', addr)
             cl_file = cl.makefile('rwb', 0)
             while True:
                 line = cl_file.readline().strip()
